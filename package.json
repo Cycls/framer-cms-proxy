@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "sync": "node --experimental-websocket scripts/sync.js"
   },
   "dependencies": {
     "framer-api": "^0.1.1",

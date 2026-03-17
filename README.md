@@ -1,15 +1,47 @@
 # Framer CMS Proxy
 
-Cloudflare Worker that proxies the cycls.ai Framer CMS Agents collection as a public REST API.
+Cloudflare Worker that serves the cycls.ai Framer CMS **Agents** collection as a public REST API.
 
-Built with [Hono](https://hono.dev) + [Framer Server API](https://www.framer.com/developers/server-api-introduction).
+Data is synced hourly from Framer to Cloudflare KV for instant responses.
+
+**Live:** https://framer-cms-proxy.mf-edc.workers.dev
 
 ## Endpoints
 
-| Method | Path             | Description          |
-| ------ | ---------------- | -------------------- |
-| GET    | `/agents`        | List all agents      |
-| GET    | `/agents/:slug`  | Get agent by slug    |
+| Method | Path             | Description              |
+| ------ | ---------------- | ------------------------ |
+| GET    | `/agents`        | List all agents          |
+| GET    | `/agents/:slug`  | Get agent by slug        |
+| POST   | `/sync`          | Trigger manual CMS sync  |
+
+## Response shape
+
+```json
+{
+  "id": "f7G8U77EM",
+  "slug": "haseef",
+  "title": "Haseef",
+  "title_ar": "حصيف",
+  "categories": ["legal"],
+  "tags": ["legal", "saudi-law", "research"],
+  "tag1": "legal",
+  "tag2": "saudi-law",
+  "tag3": "research",
+  "description": "Specialized legal assistant for...",
+  "description_ar": "مساعد قانوني متخصص...",
+  "link": "https://haseef.cycls.ai/",
+  "icon": "https://framer.com/m/Haseef-1plJjA.js",
+  "icon_svg": "<svg ...>...</svg>"
+}
+```
+
+## How it works
+
+1. **Cron trigger** (every hour) connects to Framer Server API via WebSocket
+2. Fetches the Agents collection, flattens fields to human-readable keys
+3. Extracts inline SVG icons from Framer module URLs
+4. Stores everything in Cloudflare KV
+5. `GET` requests read directly from KV (~2ms response time)
 
 ## Setup
 
@@ -17,7 +49,7 @@ Built with [Hono](https://hono.dev) + [Framer Server API](https://www.framer.com
 npm install
 ```
 
-Create `.dev.vars` for local secrets:
+Create `.dev.vars` for local development:
 
 ```
 FRAMER_API_KEY=your-framer-api-key
@@ -27,17 +59,20 @@ FRAMER_API_KEY=your-framer-api-key
 
 ```bash
 npm run dev
+# Then trigger sync: curl -X POST http://localhost:8787/sync
 ```
-
-Runs locally at `http://localhost:8787`.
 
 ## Deploy
 
 ```bash
 npx wrangler secret put FRAMER_API_KEY
 npm run deploy
+# Trigger initial sync: curl -X POST https://framer-cms-proxy.mf-edc.workers.dev/sync
 ```
 
-## How it works
+## Stack
 
-Each request opens a WebSocket connection to Framer's Server API, fetches the Agents collection, maps field IDs to human-readable names, and returns JSON. The connection is closed after each request.
+- [Hono](https://hono.dev) — web framework
+- [Framer Server API](https://www.framer.com/developers/server-api-introduction) — CMS data source
+- [Cloudflare Workers](https://developers.cloudflare.com/workers/) — runtime
+- [Cloudflare KV](https://developers.cloudflare.com/kv/) — data store
