@@ -1,0 +1,7 @@
+name = "framer-cms-proxy"
+main = "src/index.ts"
+compatibility_date = "2025-03-14"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+FRAMER_PROJECT_URL = "https://framer.com/projects/cycls-ai--yc3wR8OrPsn8qyqPQ0H8-gQCRj"
