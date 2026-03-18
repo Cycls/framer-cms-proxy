@@ -12,3 +12,7 @@ FRAMER_PROJECT_URL = "https://framer.com/projects/cycls-ai--yc3wR8OrPsn8qyqPQ0H8
 [[kv_namespaces]]
 binding = "CMS_KV"
 id = "bcb617c27e8f45a3b6f68ae1019b5352"
+
+[[routes]]
+pattern = "cms.cycls.ai/*"
+zone_name = "cycls.ai"

@@ -4,7 +4,7 @@ Cloudflare Worker that serves the cycls.ai Framer CMS **Agents** collection as a
 
 Data is synced hourly from Framer to Cloudflare KV for instant responses.
 
-**Live:** https://framer-cms-proxy.mf-edc.workers.dev
+**Live:** https://cms.cycls.ai
 
 ## Endpoints
 
@@ -67,7 +67,7 @@ npm run dev
 ```bash
 npx wrangler secret put FRAMER_API_KEY
 npm run deploy
-# Trigger initial sync: curl -X POST https://framer-cms-proxy.mf-edc.workers.dev/sync
+# Trigger initial sync: curl -X POST https://cms.cycls.ai/sync
 ```
 
 ## Stack
